@@ -20,10 +20,8 @@ class Start:
         starting_balance = 50
         stakes = 2
 
-        Game(self, stakes, starting_balance)
-
-        # hide start up window
         self.start_frame.destroy()
+        Game(self, stakes, starting_balance)
 
 
 class Game:
@@ -135,7 +133,7 @@ class Game:
 
         round_winnings = 0
         prizes = []
-        backgrounds = []
+        stats_prizes = []
         for item in range(0, 3):
             prize_num = random.randint(1,100)
 
@@ -169,6 +167,7 @@ class Game:
         self.prize2_label.photo = photo2
         self.prize3_label.config(image=photo3)
         self.prize3_label.photo = photo3
+
         # Deduct cost of game
         current_balance -= 5 * stakes_multiplier
 
