@@ -12,7 +12,7 @@ class Start:
 
         # Set Initial balance to zero
         self.starting_funds = IntVar()
-        self.starting_funds.set (0)
+        self.starting_funds.set(0)
 
         # Mystery Heading (row 0)
         self.mystery_box_label = Label(self.start_frame, text="Mystery Box Game",
@@ -68,7 +68,7 @@ class Start:
 
         # Green high stakes button
         self.high_stakes_button = Button(self.stakes_frame, text="High ($15)",
-                                         command=lambda: self.to_game(3),
+                                         command=lambda: self.to_game(0),
                                          font=button_font, bg="#99FF33")
         self.high_stakes_button.grid(row=0, column=2, pady=10)
 
@@ -130,14 +130,11 @@ class Start:
                 self.starting_funds.set(starting_balance)
 
     def to_game(self, stakes):
-
-        # retrieve starting balance
         starting_balance = self.starting_funds.get()
 
         Game(self, stakes, starting_balance)
 
-        # hide start up window
-        root.withdraw()
+        self.start_frame.destroy()
 
 
 class Game:
@@ -156,7 +153,6 @@ class Game:
 
         # List for holding statistic
         self.round_stats_list = []
-        self.game_stats_list=[starting_balance, starting_balance]
 
         # GUI Setup
         self.game_box = Toplevel()
@@ -223,22 +219,19 @@ class Game:
                                    justify=LEFT)
         self.balance_label.grid(row=4, pady=10)
 
-        # Help and Game stats button row 5
+        # Help and Game Stats button (row 5)
+        self.help_export_frame = Frame(self.game_frame)
+        self.help_export_frame.grid(row=5, pady=10)
 
-        self.start_help_frame = Frame(self.game_frame, pady=10)
-        self.start_help_frame.grid(row=5)
+        self.help_button = Button(self.help_export_frame, text="Help / Rules",
+                                  font="Arial 15 bold",
+                                  bg="#808080", fg="white")
+        self.help_button.grid(row=0, column=0, padx=2)
 
-        # Help and statistics buttons
-        self.start_help_button = Button(self.start_help_frame, text="Help",
-                                        font="Arial 15 bold",
-                                        command=self.to_help)
-        self.start_help_button.grid(row=0, column=0)
-
-        self.start_statistics_button = Button(self.start_help_frame, text="Statistics / Export",
-                                              font="Arial 15 bold",
-                                              command=lambda: self.to_stats(self.round_stats_list,
-                                                                            self.game_stats_list))
-        self.start_statistics_button.grid(row=0, column=1, padx=5)
+        self.stats_button = Button(self.help_export_frame, text="Game Stats...",
+                                   font="Arial 15 bold",
+                                   bg="#003366", fg="white")
+        self.stats_button.grid(row=0, column=1, padx=2)
 
         # Quit Button
         self.quit_button = Button(self.game_frame, text="Quit", fg="white",
@@ -296,9 +289,6 @@ class Game:
 
         # Set balance to new balance
         self.balance.set(current_balance)
-        # update game_stats_list with current balance (replace item in
-        # position 1 with current balance)
-        self.game_stats_list[1] = current_balance
 
         balance_statement = "Game Cost: ${}\nPayback: ${} \n" \
                             "Current Balance: ${}".format(5 * stakes_multiplier,
@@ -466,6 +456,270 @@ class GameStats:
                                                       anchor="w")
                 self.games_played_value_label.grid(row=4, column=1, padx=0)
 
+            class Help:
+                def __init__(self, partner):
+                    # disable help button
+                    partner.start_help_button.config(state=DISABLED)
+
+                    # Sets up child window (ie: help box)
+                    self.help_box = Toplevel()
+
+                    # If users press 'x' cross at the top, closes help and 'releases' help button.
+                    self.help_box.protocol('WM_DELETE_WINDOW', partial(self.close_help, partner))
+
+                    # Set up GUI Frame
+                    self.help_frame = Frame(self.help_box)
+                    self.help_frame.grid()
+
+                    # Set up Help heading (row 0)
+                    self.how_heading = Label(self.help_frame, text="Help / Instructions",
+                                             font="Arial 15 bold")
+                    self.how_heading.grid(row=0)
+
+                    # Help text (label, row 1)
+                    self.help_text = Label(self.help_frame, text="",
+                                           justify=LEFT, width=40, wrap=250)
+                    self.help_text.grid(row=1)
+
+                    # Dismiss button (row 2)
+                    self.dismiss_btn = Button(self.help_frame, text="Dismiss", width=10, bg="maroon", fg="white",
+                                              font="arial" "10" "bold", command=partial(self.close_help, partner))
+                    self.dismiss_btn.grid(row=2, pady=10)
+
+                def close_help(self, partner):
+                    # Put help button back to normal...
+                    partner.start_help_button.config(state=NORMAL)
+                    self.help_box.destroy()
+
+
+class History:
+    def __init__(self, partner, game_history, game_stats):
+
+        # disable history button
+        partner.start_statistics_button.config(state=DISABLED)
+
+        heading = "Arial 12 bold"
+        content = "Arial 12"
+
+        # Sets up child window (ie: history box)
+        self.history_box = Toplevel()
+
+        # If users press 'x' cross at the top, closes history and 'releases' history button.
+        self.history_box.protocol('WM_DELETE_WINDOW', partial(self.close_history, partner))
+
+        # Set up GUI Frame
+        self.history_frame = Frame(self.history_box)
+        self.history_frame.grid()
+
+        # Set up history heading (row 0)
+        self.how_heading = Label(self.history_frame, text="Game Statistics",
+                                 font=("Arial", "19", "bold",)
+                                 )
+        self.how_heading.grid(row=0)
+
+        # history text (label, row 1)
+        self.history_text = Label(self.history_frame, text="Here are your Game Statistics. "
+                                                           "Please use the export button to access the result",
+                                  justify=LEFT, width=40, wrap=250, padx=10, pady=10)
+        self.history_text.grid(row=1)
+
+        # Stating Balance (row 2)
+        self.detail_frame = Frame(self.history_frame)
+        self.detail_frame.grid(row=2)
+
+
+        #Starting Balance row 2.0
+
+        self.start_balance_label = Label(self.detail_frame,
+                                         text="Starting Balance:",
+                                         font=heading,
+                                         anchor="e")
+        self.start_balance_label.grid(row=0, column=0, padx=0)
+
+        self.start_balance_value_label = Label(self.detail_frame,
+                                               font=content, text="${}".format(game_stats[0]),
+                                               anchor="w")
+        self.start_balance_value_label.grid(row=0,column=1,padx=0)
+
+        # Current Balance (row2.2)
+        self.current_balance_label = Label (self.detail_frame,
+                                            text="Current Balance:", font=heading,
+                                            anchor="e")
+        self.current_balance_label.grid(row=1, column=0, padx=0)
+
+        self.current_balance_value_label= Label(self.detail_frame, font=content,text="${}".format(game_stats[1]),
+                                                anchor="w")
+        self.current_balance_value_label.grid(row=1,column=1,padx=0)
+
+        if game_stats[1] >= game_stats[0]:
+            win_loss = "Amount won:"
+            amount = game_stats[1] - game_stats[0]
+            win_loss_fg = "green"
+        else:
+            win_loss = "Amount Lost:"
+            amount = game_stats[0] - game_stats[1]
+            win_loss_fg = "red"
+
+        # Amount won/ lost (row 2.3)
+        self.wind_loss_label = Label(self.detail_frame,
+                                     text=win_loss, font=heading,
+                                     anchor="e")
+        self.wind_loss_label.grid(row=2, column=0, padx=0)
+
+        self.wind_loss_value_label = Label(self.detail_frame, font=content,
+                                           text="${}".format(amount),
+                                           fg=win_loss_fg, anchor="w")
+        self.wind_loss_value_label.grid(row=2 ,column=1 ,padx=0)
+
+        # Rounds Played (row2.4)
+        self.games_played_label = Label(self.detail_frame,
+                                        text="Rounds Played:", font=heading,
+                                        anchor="e")
+        self.games_played_label.grid(row=4,column=0,padx=0)
+
+        self.games_played_value_label = Label(self.detail_frame, font=content,
+                                              text=len(game_history), anchor="w")
+        self.games_played_value_label.grid(row=4, column=1, padx=0)
+
+        # Export / Dismiss Buttons Frame (Row 3)
+        self.export_dismiss_frame = Frame(self.history_frame)
+        self.export_dismiss_frame.grid(row=3, pady=10)
+
+        # Export Button
+        self.export_button = Button(self.export_dismiss_frame, text="Export",
+                                    font="Arial 15 bold", bg="darkblue",fg="white",
+                                    command=partial(lambda: self.export(game_history,game_stats)))
+        self.export_button.grid(row=0, column=0,padx=5)
+
+        if len(game_history) == 0:
+            self.export_button.config(state=DISABLED)
+
+        # Dismiss Button
+        self.dismiss_button = Button(self.export_dismiss_frame, text="Dismiss",
+                                     font="Arial 15 bold",bg="maroon",fg="white",
+                                    command=partial(self.close_history, partner))
+        self.dismiss_button.grid(row=0, column=1)
+
+    def close_history(self, partner):
+        # Put history button back to normal...
+        partner.start_statistics_button.config(state=NORMAL)
+        self.history_box.destroy()
+
+    def export(self, game_history, all_game_stats):
+        Export(self, game_history, all_game_stats)
+
+
+class Export:
+                def __init__(self, partner, game_history, all_game_stats):
+
+                    # disable export button
+                    partner.export_button.config(state=DISABLED)
+
+                    # Sets up child window (ie: export box)
+                    self.export_box = Toplevel()
+
+                    # If users press 'x' cross at the top, closes export and 'releases' export button.
+                    self.export_box.protocol('WM_DELETE_WINDOW', partial(self.close_export, partner))
+
+                    # Set up GUI Frame
+                    self.export_frame = Frame(self.export_box, width=300)
+                    self.export_frame.grid()
+
+                    # Set up Export heading (row 0)
+                    self.how_heading = Label(self.export_frame, text="Export / Instructions",
+                                             font="Arial 15 bold")
+                    self.how_heading.grid(row=0)
+
+                    # Export text (label, row 1)
+                    self.export_text = Label(self.export_frame, text="Enter a filename in the box below",
+                                             justify=LEFT, width=40, wrap=250)
+                    self.export_text.grid(row=1)
+
+                    # Warning text (label, row2)
+                    self.export_text = Label(self.export_frame, text="If the filename you entered already exists,"
+                                                                     "it will be overwritten.", justify=LEFT,
+                                             fg='red', font="Arial 10 italic",
+                                             wrap=225, padx=10, pady=10)
+                    self.export_text.grid(row=2, pady=10)
+
+                    # Filename Entry Box (row 3)
+                    self.filename_entry = Entry(self.export_frame, width=20,
+                                                font="Arial 14 bold", justify=CENTER)
+                    self.filename_entry.grid(row=3, pady=10)
+
+                    # Error Message Labels (initially blank, row 4)
+                    self.save_error_label = Label(self.export_frame, text="", fg="maroon"
+                                                  )
+                    self.save_error_label.grid(row=4)
+
+                    # Save / Cancel Frame (row 5)
+                    self.save_cancel_frame = Frame(self.export_frame)
+                    self.save_cancel_frame.grid(row=5, pady=10)
+
+                    # Save and Cancel buttons (row 0 of save_cancel_frame)
+                    self.save_button = Button(self.save_cancel_frame, text="Save",
+                                              command=partial(
+                                                  lambda: self.save_history(partner, game_history, all_game_stats)))
+                    self.save_button.grid(row=0, column=0)
+
+                    self.cancel_button = Button(self.save_cancel_frame, text="Cancel",
+                                                command=partial(self.close_export, partner))
+                    self.cancel_button.grid(row=0, column=1)
+
+                def close_export(self, partner):
+                    # Put export button back to normal...
+                    partner.export_button.config(state=NORMAL)
+                    self.export_box.destroy()
+
+                def save_history(self, partner, game_history, game_stats):
+
+                    valid_char = "[A-Za-z0-9_]"
+                    has_error = "no"
+
+                    filename = self.filename_entry.get()
+
+                    for letter in filename:
+                        if re.match(valid_char, letter):
+                            continue
+
+                        elif letter == " ":
+                            problem = " (no spaces allowed)"
+
+                        else:
+                            problem = ("(no {}'s allowed)".format(letter))
+                        has_error = "yes"
+                        break
+
+                    if filename == "":
+                        problem = "can't be blank"
+                        has_error = "yes"
+
+                    if has_error == "yes":
+                        self.save_error_label.config(text="Invalid filename - {}".format(problem))
+
+                        self.filename_entry.config(bg="#ffafaf")
+                        print()
+
+                    else:
+                        filename = filename + ".txt"
+
+                        f = open(filename, "w+")
+
+                        f.write("Game Statistics\n\n")
+
+                        f.write("Starting Balance ${}".format(game_stats[0]) + "\n"
+                                                                               "Ending Balance ${}".format(
+                            game_stats[1]) + "\n")
+
+                        # Heading for rounds
+                        f.write("\nRound Details - Most Recent at the bottom\n\n")
+
+                        for item in game_history:
+                            f.write(item + "\n")
+
+                        f.close()
+
+                        self.close_export(partner)
 # main routine
 if __name__ == "__main__":
     root = Tk()
