@@ -226,19 +226,19 @@ class Game:
         # Help and statistics buttons
         self.start_help_button = Button(self.start_help_frame, text="Help",
                                         font="Arial 15 bold",
-                                        bg="#808080", fg="white",
+                                        bg="black", fg="white",
                                         command=self.to_help)
         self.start_help_button.grid(row=0, column=1)
 
         self.start_statistics_button = Button(self.start_help_frame, text="Statistics / Export",
                                               font="Arial 15 bold",
-                                              bg="#003366", fg="white",
+                                              bg="black", fg="white",
                                               command=lambda: self.to_stats(self.round_stats_list, self.game_stats_list))
         self.start_statistics_button.grid(row=0, column=2, padx=2)
 
         # Quit Button
         self.quit_button = Button(self.game_frame, text="Quit", fg="white",
-                                  bg="#660000", font="Arial 15 bold", width=20,
+                                  bg="black", font="Arial 15 bold", width=20,
                                   command=self.to_quit, padx=10, pady=10)
         self.quit_button.grid(row=6, pady=10)
 
@@ -443,7 +443,7 @@ class History:
 
         # Export Button
         self.export_button = Button(self.export_dismiss_frame, text="Export",
-                                    font="Arial 15 bold", bg="darkblue",fg="white",
+                                    font="Arial 15 bold", bg="black",fg="white",
                                     command=partial(lambda: self.export(game_history,game_stats)))
         self.export_button.grid(row=0, column=0,padx=5)
 
@@ -452,7 +452,7 @@ class History:
 
         # Dismiss Button
         self.dismiss_button = Button(self.export_dismiss_frame, text="Dismiss",
-                                     font="Arial 15 bold",bg="maroon",fg="white",
+                                     font="Arial 15 bold",bg="black",fg="white",
                                      command=partial(self.close_history, partner))
         self.dismiss_button.grid(row=0, column=1)
 
@@ -516,12 +516,12 @@ class Export:
 
                     # Save and Cancel buttons (row 0 of save_cancel_frame)
                     self.save_button = Button(self.save_cancel_frame, text="Save",
-                                              font="Arial 15 bold", bg="#003366", fg="white",
+                                              font="Arial 15 bold", bg="black", fg="white",
                                               command=partial(lambda: self.save_history(partner, game_history, all_game_stats)))
                     self.save_button.grid(row=0, column=0)
 
                     self.cancel_button = Button(self.save_cancel_frame, text="Cancel",
-                                                font="Arial 15 bold", bg="#003366", fg="white",
+                                                font="Arial 15 bold", bg="black", fg="white",
                                                 command=partial(self.close_export, partner))
                     self.cancel_button.grid(row=0, column=1)
 
@@ -605,7 +605,7 @@ class Help:
                         self.help_text.grid(row=1)
 
                         # Dismiss button (row 2)
-                        self.dismiss_btn = Button(self.help_frame, text="Dismiss", width=10, bg="maroon",
+                        self.dismiss_btn = Button(self.help_frame, text="Dismiss", width=10, bg="black",
                                                   fg="white",
                                                   font="arial" "10" "bold",
                                                   command=partial(self.close_help, partner))
