@@ -200,7 +200,7 @@ class Game:
 
         # Play button goes here (row 3)
         self.play_button = Button(self.game_frame, text="Open Boxes",
-                                  bg="#FFFF33", font="Arial 15 bold", width=20,
+                                  bg="black",fg="white", font="Arial 15 bold", width=20,
                                   padx=10, pady=10, command=self.reveal_boxes)
         self.play_button.grid(row=3)
 
@@ -224,7 +224,7 @@ class Game:
         self.start_help_frame.grid(row=5)
 
         # Help and statistics buttons
-        self.start_help_button = Button(self.start_help_frame, text="Help",
+        self.start_help_button = Button(self.start_help_frame, text="Help/Rules",
                                         font="Arial 15 bold",
                                         bg="black", fg="white",
                                         command=self.to_help)
@@ -343,7 +343,9 @@ class Game:
                                           "button will no longer operate. \n\n"
                                           "The winnings will be automatically added back to your balance \n\n"
                                           "The following winnings are... \n\n"
-                                          "Lead ($0)|Copper ($1)|Silver($2)|Gold($5)")
+                                          "Lead ($0)|Copper ($1)|Silver($2)|Gold($5). \n"
+                                          "Lead ($0)|Copper ($2)|Silver($4)|Gold($10). \n"
+                                          "Lead ($0)|Copper ($3)|Silver($6)|Gold($15)")
 
     def to_stats(self, game_history, game_stats):
         History(self, game_history, game_stats)
